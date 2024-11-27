@@ -5,6 +5,8 @@ let gridSize = 30;
 let snake = [{x: 120, y: 120}];
 let directionX = gridSize;
 let directionY = 0;
+
+// randomize food location
 let foodX = Math.floor(Math.random() * canvas.width / gridSize) * gridSize;
 let foodY = Math.floor(Math.random() * canvas.height / gridSize) * gridSize;
 
@@ -12,7 +14,7 @@ let foodY = Math.floor(Math.random() * canvas.height / gridSize) * gridSize;
 const foodImage = new Image();
 foodImage.src = 'rat.png';
 
-// snake head image
+// snake head image (cartoon head)
 const headImage = new Image();
 headImage.src = 'snake.png';
 
@@ -20,6 +22,7 @@ let game;
 
 // create the snake's body
 function drawCircle(x, y, color) {
+    // create some shading to the snakes body
     d_space.shadowColor = "rgba(0, 0, 0, 0.3)";
     d_space.shadowBlur = 8;
     d_space.shadowOffsetX = 4;
@@ -71,14 +74,14 @@ function moveSnake() {
     }
 }
 
-// make the snake move, control using arrow keys
+// add listener, to look for keypresses
 document.addEventListener("keydown", function(event) {
     // press enter to start the game
     if (event.key === "Enter" && !game) {
         startGame();
         return;
     }
-
+    // arrow keys as inputs to move the snake
     if (event.key === "ArrowLeft" && directionX === 0) {
         directionX = -gridSize;
         directionY = 0;
@@ -99,7 +102,7 @@ function gameLoop() {
     moveSnake();
     draw();
 }
-
+// resets the state of the game to the start (removes all parts of snake except the head), new food location
 function resetGame() {
     snake = [{x: 120, y: 120}];
     directionX = gridSize;
@@ -109,21 +112,21 @@ function resetGame() {
     document.getElementById("playButton").textContent = "Press Enter to Play";
     document.getElementById("playButton").classList.remove("hidden");
 }
-
+// starts the game -> snake head begines moving
 function startGame() {
     resetGame();
     document.getElementById("playButton").classList.add("hidden");
     game = setInterval(gameLoop, 100);
 }
 
-
+// when game ends, show play button again to start over
 function gameOver() {
     clearInterval(game);
     document.getElementById("playButton").textContent = "Press Enter to Play Again";
     document.getElementById("playButton").classList.remove("hidden");
     game = null;
 }
-
+// play button, when pressed triggers startGame function
 document.getElementById("playButton").addEventListener("click", function() {
     startGame();
 });
