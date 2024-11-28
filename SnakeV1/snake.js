@@ -12,7 +12,7 @@ let directionY = 0;
 let foodX = Math.floor(Math.random() * canvas.width / gridSize) * gridSize;
 let foodY = Math.floor(Math.random() * canvas.height / gridSize) * gridSize;
 
-// food image (remi the rat)
+// food image (cartoon rat? mouse?)
 const foodImage = new Image();
 foodImage.src = 'rat.png';
 
