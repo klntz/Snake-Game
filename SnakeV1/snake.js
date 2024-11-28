@@ -1,6 +1,8 @@
+// gettting canvas for game to be played in
 const canvas = document.getElementById("snakeGame");
 const d_space = canvas.getContext("2d");
 
+// define how the snake moves inside the game space (moves 30pixels each update)
 let gridSize = 30;
 let snake = [{x: 120, y: 120}];
 let directionX = gridSize;
@@ -18,6 +20,7 @@ foodImage.src = 'rat.png';
 const headImage = new Image();
 headImage.src = 'snake.png';
 
+// define gmae for marking game state
 let game;
 
 // create the snake's body
@@ -45,6 +48,7 @@ function draw() {
     for (let i = 1; i < snake.length; i++) {
         drawCircle(snake[i].x, snake[i].y, "lightgreen");
     }
+
     // draw the head
     const head = snake[0];
     d_space.drawImage(headImage, head.x, head.y, gridSize, gridSize);
@@ -57,19 +61,30 @@ function draw() {
 function moveSnake() {
     let newHead = {x: snake[0].x + directionX, y: snake[0].y + directionY};
 
-    // if snake hits walls, game over
+    // if snake hits a wall, game ends calls gameOver function
     if (newHead.x < 0 || newHead.x >= canvas.width || newHead.y < 0 || newHead.y >= canvas.height) {
         gameOver();
         return;
     }
+
+    // Check if the snake collides with itself. start i = 1 because i[0] is the head
+    for (let i = 1; i < snake.length; i++) {
+        if (newHead.x === snake[i].x && newHead.y === snake[i].y) {
+            gameOver();
+            return;
+        }
+    }
+
     // make new head to make snake longer if eat food
     snake.unshift(newHead);
 
-    // if snake eats food, get bigger
+    // if snake eats food, no last part of snake is removed, new head is where food was
     if (newHead.x === foodX && newHead.y === foodY) {
+        // new position for food
         foodX = Math.floor(Math.random() * canvas.width / gridSize) * gridSize;
         foodY = Math.floor(Math.random() * canvas.height / gridSize) * gridSize;
     } else {
+        // if doesnt hit food, removes last part to keep moving
         snake.pop();
     }
 }
@@ -102,7 +117,8 @@ function gameLoop() {
     moveSnake();
     draw();
 }
-// resets the state of the game to the start (removes all parts of snake except the head), new food location
+
+// resets the state of the game to the start (removes all parts of snake except the head), new random food location
 function resetGame() {
     snake = [{x: 120, y: 120}];
     directionX = gridSize;
@@ -112,20 +128,26 @@ function resetGame() {
     document.getElementById("playButton").textContent = "Press Enter to Play";
     document.getElementById("playButton").classList.remove("hidden");
 }
+
 // starts the game -> snake head begines moving
 function startGame() {
     resetGame();
     document.getElementById("playButton").classList.add("hidden");
+    // set how often the game refreshes (100 milliseconds)
     game = setInterval(gameLoop, 100);
 }
 
 // when game ends, show play button again to start over
 function gameOver() {
     clearInterval(game);
-    document.getElementById("playButton").textContent = "Press Enter to Play Again";
+    // score is length - 1 for the head
+    const score =  snake.length - 1;
+    // display the score on one line, and play again on a separate line 
+    document.getElementById("playButton").innerHTML = "Score: " + score + "<br>" + "Press Enter to Play Again";
     document.getElementById("playButton").classList.remove("hidden");
     game = null;
 }
+
 // play button, when pressed triggers startGame function
 document.getElementById("playButton").addEventListener("click", function() {
     startGame();
